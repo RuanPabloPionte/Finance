@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Jacques_Francois } from "next/font/google";
 import "./globals.css";
-import Header from "./ui/Header";
 
-const inter = Inter({ subsets: ["latin"] });
+const jacques = Jacques_Francois({
+  subsets: ["latin"],
+  display: "swap",
+  weight: "400",
+});
 
 export const metadata: Metadata = {
   title: "Finance",
@@ -17,10 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
-      <body className="bg-stone-900 text-slate-200">
-        <Header />
-        {children}
-      </body>
+      <body className={jacques.className}>{children}</body>
     </html>
   );
 }
