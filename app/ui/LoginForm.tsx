@@ -1,11 +1,16 @@
+"use client";
 import { FaUser, FaLock } from "react-icons/fa";
 import FormInput from "./FormInput";
 import Link from "next/link";
+import { authenticate } from "@/app/lib/actions/user";
+import { useFormState } from "react-dom";
 
 function LoginForm() {
+  const [state, formAction] = useFormState(authenticate, undefined);
+
   return (
     <form
-      action=""
+      action={formAction}
       className="bg-gradient-to-tr from-[#5eabc3] to-[#0c697d] rounded-3xl p-8 grid gap-5"
     >
       <h1 className="text-3xl text-center font-bold">LOGIN</h1>
@@ -31,6 +36,7 @@ function LoginForm() {
       <button className="border-2 border-black bg-stone-900 rounded-3xl p-3 tracking-widest text-lg font-semibold my-3">
         ENTRAR
       </button>
+      {state && state}
       <p>
         Não possui uma conta?{" "}
         <span className="text-blue-900 hover:text-red-500 hover:border-b-2 transition-all duration-100">
