@@ -7,9 +7,11 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const isOnFinance = nextUrl.pathname.startsWith("/Finance");
-      console.log("isOnFinance", isOnFinance);
-      if (isOnFinance) {
+      const tabs = ["/Finance", "/Task"];
+      const isOnLogedPages = tabs.some((tab) =>
+        nextUrl.pathname.startsWith(tab)
+      );
+      if (isOnLogedPages) {
         if (isLoggedIn) return true;
         return false; // Redirect unauthenticated users to login page
       } else if (isLoggedIn) {
