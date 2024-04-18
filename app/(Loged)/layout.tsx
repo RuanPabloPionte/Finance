@@ -1,4 +1,4 @@
-import Header from "../ui/Header";
+import Header from "../components/Header";
 export default function LogedLayout({
   children, // will be a page or nested layout
 }: {

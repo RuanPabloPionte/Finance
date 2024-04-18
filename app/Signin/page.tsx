@@ -1,4 +1,4 @@
-import FormInput from "../ui/FormInput";
+import FormInput from "../components/FormInput";
 import Link from "next/link";
 import { addUser } from "@/app/lib/actions/user";
 
