@@ -3,7 +3,22 @@ import { authConfig } from "./auth.config";
 import Credentials from "next-auth/providers/credentials";
 import { connectToDB } from "./app/lib/utils";
 import { User } from "./app/lib/models/user";
-import { UserType } from "@/types";
+import { NextAuthJWT } from "next-auth";
+import { Session } from "next-auth";
+
+interface TokenData {
+  username?: string;
+  id?: string;
+  // Adicione outras propriedades do token aqui, se necessário
+}
+
+export interface UserSession extends Session {
+  user: {
+    username?: string;
+    id?: string;
+    // Adicione outras propriedades do usuário aqui, se necessário
+  };
+}
 
 const login = async (credentials: Partial<Record<string, unknown>>) => {
   // console.log(credentials);
@@ -38,4 +53,23 @@ export const { signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }: NextAuthJWT<UserSession>) {
+      if (user) {
+        token.username = user.username;
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({
+      session,
+      token,
+    }: NextAuthJWT<UserSession>): Promise<UserSession> {
+      if (token) {
+        session.user.username = token.username;
+        session.user.id = token.id;
+      }
+      return session;
+    },
+  },
 });
