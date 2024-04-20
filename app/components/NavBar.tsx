@@ -6,8 +6,10 @@ function NavBar() {
   const active = "bg-foreground rounded-t-xl px-4 py-1";
   return (
     <nav>
-      <div className="flex gap-4  h-9 min-w-full bg-stone-700 border-b-8
-      border-foreground text-primary-foreground tracking-wide font-medium">
+      <div
+        className="flex gap-4  h-9 min-w-full bg-primary text-secondary-foreground border-b-8
+      border-foreground tracking-wide font-medium"
+      >
         <Link
           href="/Finance"
           className={pathname === "/Finance" ? active : "mx-2"}

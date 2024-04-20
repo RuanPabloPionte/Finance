@@ -31,7 +31,7 @@ function LoginForm() {
         <label htmlFor="remeberMeCheckbox" className="cursor-pointer">
           Lembrar de mim
         </label>
-        <span className="text-blue-900">Esqueceu a senha</span>
+        <span className="text-secondary-foreground">Esqueceu a senha</span>
       </div>
       <button className="border-2 border-black bg-stone-900 rounded-3xl p-3 tracking-widest text-lg font-semibold my-3">
         ENTRAR
@@ -39,7 +39,7 @@ function LoginForm() {
       {state && state}
       <p>
         Não possui uma conta?{" "}
-        <span className="text-blue-900 hover:text-red-500 hover:border-b-2 transition-all duration-100">
+        <span className="text-secondary-foreground hover:text-red-600 hover:border-b-2 transition-all duration-100">
           <Link href="/Signin">Sign in</Link>{" "}
         </span>
       </p>
