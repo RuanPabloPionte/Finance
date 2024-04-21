@@ -1,38 +1,16 @@
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/app/components/ui/table";
+import MonthsCarousel from "@/app/components/MonthsCarousel";
+import TransactionsTableFooter from "@/app/components/TransactionsTableFooter";
+import TransactionsTable from "@/app/components/TransactionsTable";
 
 function Finance() {
   return (
-    <section className=" m-4 border-2 border-red-500">
+    <section className=" m-4">
       {/* transactions */}
-      <div className="border-2 border-blue-500">
-        <Table>
-          <TableCaption>Uma lista de transações.</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">Invoice</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Method</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell className="font-medium">INV001</TableCell>
-              <TableCell>Paid</TableCell>
-              <TableCell>Credit Card</TableCell>
-              <TableCell className="text-right">$250.00</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+      <div className="border-x-2 border-t-2  border-secondary-foreground rounded-t-xl ">
+        <MonthsCarousel />
+        <TransactionsTable />
       </div>
+      <TransactionsTableFooter />
     </section>
   );
 }
