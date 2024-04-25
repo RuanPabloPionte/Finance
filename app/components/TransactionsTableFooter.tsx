@@ -1,30 +1,30 @@
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/app/components/ui/dialog";
-import FormInput from "./FormInput";
-
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/app/components/ui/select";
 
 import { Button } from "@/app/components/ui/button";
 import { FaPlus } from "react-icons/fa6";
 
 import { getTransactionTypes } from "../lib/actions/Transactions";
 
+import { auth } from "@/auth";
+import TransactionForm from "./TransactionForm";
+
 async function TransactionsTableFooter() {
   const types = await getTransactionTypes();
+  const session = await auth();
+
+  const typesForProps = types?.map(
+    (type: { id: { toString: () => string }; name: string }) => ({
+      id: type.id.toString(),
+      name: type.name,
+    })
+  );
+  // console.log(typesForProps);
   return (
     <section className="bg-secondary border-1 rounded-b-xl p-2 flex items-center ">
       <div className=" w-full flex justify-between p-1 px-2">
@@ -42,40 +42,10 @@ async function TransactionsTableFooter() {
               Cadastrar Transação
             </DialogTitle>
           </DialogHeader>
-          <form>
-            <FormInput type="text" name="name" placeHolder="Nome" />
-            <FormInput type="text" name="source" placeHolder="Origem/Destino" />
-            <FormInput type="number" name="value" placeHolder="Valor" />
-            <Select name="types">
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Escolha um Tipo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Type</SelectLabel>
-                  {types ? (
-                    types.map((type) => (
-                      <SelectItem key={type.id} value={type.id}>
-                        {type.name}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="apple">Não há tipos</SelectItem>
-                  )}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <DialogFooter>
-              <Button
-                type="submit"
-                name="acao"
-                value="add"
-                className="bg-background text-foreground rounded-[0.5rem]"
-              >
-                ENVIAR
-              </Button>
-            </DialogFooter>
-          </form>
+          <TransactionForm
+            userId={session?.user?.id?.toString()}
+            types={typesForProps}
+          />
         </DialogContent>
       </Dialog>
     </section>
