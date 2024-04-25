@@ -1,31 +1,16 @@
 import { connectToDB } from "../utils";
-import { TransactionType } from "../models/transactions";
-// Importe o modelo TransactionType do arquivo que contém as definições de schema
+import { TransactionType, Transaction } from "../models/transactions";
+import { User } from "../models/user";
+import { revalidatePath } from "next/cache";
 
-// Função para criar tipos de transação
-const createTransactionTypes = async () => {
-  try {
-    await connectToDB(); // Conectar ao banco de dados
-
-    // Array com os tipos de transação a serem criados
-    const typesToCreate = [
-      { name: "Deposit" },
-      { name: "Investment" },
-      { name: "Withdrawal" }, // Corrigido "Withdrawal" conforme mencionado
-    ];
-
-    // Criar os tipos de transação
-    await TransactionType.create(typesToCreate);
-
-    console.log("Transaction types created successfully.");
-  } catch (error) {
-    console.error("Error creating transaction types:", error);
-  }
-};
-
-const getTransactionTypes = async () => {
+const getTransactionTypes = async (id) => {
   try {
     await connectToDB();
+
+    if (id) {
+      const transactionTypes = await TransactionType.findById(id);
+      return transactionTypes;
+    }
 
     const transactionTypes = await TransactionType.find();
     return transactionTypes;
@@ -33,17 +18,42 @@ const getTransactionTypes = async () => {
     console.error("Error getting transaction types", error);
   }
 };
-export { createTransactionTypes, getTransactionTypes };
 
-// console.log(depositTransactionType);
+const setTransaction = async (formData) => {
+  const { userId, name, source, value, types, action } =
+    Object.fromEntries(formData);
 
-// // Create a deposit transaction
-// const depositTransaction = new Transaction({
-//   name: 'Deposit transaction',
-//   type: depositTransactionType._id, // Reference to the 'Deposit' transaction type document
-//   source: 'Some source',
-//   value: 100, // Example value
-// });
+  const user = await User.findById(userId);
 
-// // Save the deposit transaction to the database
-// await depositTransaction.save();
+  if (!user) return null;
+
+  try {
+    connectToDB();
+
+    const newTransaction = {
+      name,
+      type: types,
+      source,
+      value: parseFloat(value),
+    };
+
+    const WithdrawalId = "66250517e747a01b58a2a216";
+
+    if (newTransaction.type === WithdrawalId) {
+      newTransaction.value = -Math.abs(newTransaction.value);
+    }
+
+    const lastTransaction = await Transaction.create(newTransaction);
+    console.log(newTransaction.value);
+
+    user.transactions.push(lastTransaction);
+    await user.save();
+  } catch (err) {
+    console.log(err);
+    throw new Error("Failed to create transaction!");
+  }
+
+  revalidatePath("/Finance");
+};
+
+export { getTransactionTypes, setTransaction };
