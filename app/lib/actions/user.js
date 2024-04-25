@@ -7,9 +7,6 @@ import { signIn } from "@/auth";
 
 export const addUser = async (formData) => {
   const { username, email, password } = Object.fromEntries(formData);
-
-  // console.log(username, email, password);
-
   try {
     connectToDB();
 
@@ -26,6 +23,18 @@ export const addUser = async (formData) => {
 
   revalidatePath("/Finance");
   redirect("/Finance");
+};
+
+export const getUser = async (id) => {
+  try {
+    connectToDB();
+
+    const user = await User.findById(id).populate("transactions");
+
+    return user;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const authenticate = async (prevState, formData) => {
