@@ -2,10 +2,11 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { connectToDB } from "../utils";
-import { User } from "../models/user";
+import { IUser, User } from "../models/user";
 import { signIn } from "@/auth";
+import { HydratedDocument } from "mongoose";
 
-export const addUser = async (formData) => {
+export const addUser = async (formData: FormData) => {
   const { username, email, password } = Object.fromEntries(formData);
   try {
     connectToDB();
@@ -15,7 +16,7 @@ export const addUser = async (formData) => {
       email,
       password,
     };
-    await User.create(newUser);
+    const user: HydratedDocument<IUser> = await User.create(newUser);
   } catch (err) {
     console.log(err);
     throw new Error("Failed to create user!");
@@ -25,28 +26,25 @@ export const addUser = async (formData) => {
   redirect("/Finance");
 };
 
-export const getUser = async (id) => {
+export const getUser = async (id: string) => {
   try {
     connectToDB();
 
     const user = await User.findById(id).populate("transactions");
-
     return user;
   } catch (error) {
     console.log(error);
   }
 };
 
-export const authenticate = async (prevState, formData) => {
+export const authenticate = async (_prevState: any, formData: FormData) => {
   // console.log(formData);
   const { username, password } = Object.fromEntries(formData);
 
   try {
     await signIn("credentials", { username, password });
   } catch (err) {
-    if (err.message.includes("CredentialsSignin")) {
-      return "Wrong Credentials";
-    }
-    throw err;
+    //
+    console.log(err);
   }
 };
