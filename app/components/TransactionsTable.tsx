@@ -1,3 +1,4 @@
+"use server";
 import {
   Table,
   TableBody,
@@ -22,12 +23,29 @@ import { FaTrashCan, FaPen } from "react-icons/fa6";
 import { getUser } from "../lib/actions/user";
 import { auth } from "@/auth";
 import { Session } from "next-auth";
-import { getTransactionTypes } from "../lib/actions/Transactions";
+import {
+  getTransactionTypes,
+  deleteTransaction,
+} from "../lib/actions/Transactions";
 
 async function TransactionsTable() {
   const session: Session | null = await auth();
-  const user = await getUser(session?.user?.id);
+  const user = await getUser(session?.user.id);
 
+  if (!user) {
+    console.log("no user");
+    return null;
+  }
+
+  const handledelete = async (formData: FormData) => {
+    "use server";
+    deleteTransaction(formData);
+  };
+
+  const handleUpdate = async (formData: FormData) => {
+    "use server";
+    console.log(formData);
+  };
   return (
     <Table>
       <TableHeader>
@@ -63,12 +81,27 @@ async function TransactionsTable() {
                   <PopoverContent className="my-2 mx-4 w-[30vw]">
                     <h1 className="text-center">Ações disponiveis</h1>
                     <div className="mt-2 grid gap-4">
-                      <Button>
-                        DELETAR <FaTrashCan className="mx-2" />
-                      </Button>
-                      <Button>
-                        EDITAR <FaPen className="mx-2" />
-                      </Button>
+                      <form action={handledelete}>
+                        <input
+                          hidden
+                          type="text"
+                          name="id"
+                          value={item.id}
+                          className="hidden "
+                        />
+                        <br />
+                        <Button>
+                          DELETAR <FaTrashCan className="mx-2" />
+                        </Button>
+                      </form>
+
+                      <form action={handleUpdate}>
+                        <input hidden type="text" name="id" value={item.id} />
+                        <br />
+                        <Button>
+                          EDITAR <FaPen className="mx-2" />
+                        </Button>
+                      </form>
                     </div>
                   </PopoverContent>
                 </Popover>

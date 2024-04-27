@@ -44,7 +44,6 @@ const setTransaction = async (formData) => {
     }
 
     const lastTransaction = await Transaction.create(newTransaction);
-    console.log(newTransaction.value);
 
     user.transactions.push(lastTransaction);
     await user.save();
@@ -56,4 +55,22 @@ const setTransaction = async (formData) => {
   revalidatePath("/Finance");
 };
 
-export { getTransactionTypes, setTransaction };
+const deleteTransaction = async (formData) => {
+  const { id } = Object.fromEntries(formData);
+  console.log(id);
+
+  if (!id) throw new Error("Id não informado!");
+
+  try {
+    connectToDB();
+
+    const deletedTransaction = await Transaction.findByIdAndDelete(id);
+    // console.log(deletedTransaction);
+  } catch (error) {
+    console.log(error);
+  }
+
+  revalidatePath("/Finance");
+};
+
+export { getTransactionTypes, setTransaction, deleteTransaction };
