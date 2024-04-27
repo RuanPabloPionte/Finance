@@ -1,9 +1,10 @@
 import { connectToDB } from "../utils";
 import { TransactionType, Transaction } from "../models/transactions";
-import { User } from "../models/user";
+import { User, IUser } from "../models/user";
 import { revalidatePath } from "next/cache";
+import { HydratedDocument, Types } from "mongoose";
 
-const getTransactionTypes = async (id) => {
+const getTransactionTypes = async (id?: Types.ObjectId) => {
   try {
     await connectToDB();
 
@@ -19,11 +20,11 @@ const getTransactionTypes = async (id) => {
   }
 };
 
-const setTransaction = async (formData) => {
+const setTransaction = async (formData: FormData) => {
   const { userId, name, source, value, types, action } =
     Object.fromEntries(formData);
 
-  const user = await User.findById(userId);
+  const user: IUser | null = await User.findById(userId);
 
   if (!user) return null;
 
@@ -34,7 +35,7 @@ const setTransaction = async (formData) => {
       name,
       type: types,
       source,
-      value: parseFloat(value),
+      value: parseFloat(String(value)),
     };
 
     const WithdrawalId = "66250517e747a01b58a2a216";
@@ -45,19 +46,17 @@ const setTransaction = async (formData) => {
 
     const lastTransaction = await Transaction.create(newTransaction);
 
-    user.transactions.push(lastTransaction);
+    user?.transactions?.push(lastTransaction);
     await user.save();
+    revalidatePath("/");
   } catch (err) {
     console.log(err);
     throw new Error("Failed to create transaction!");
   }
-
-  revalidatePath("/Finance");
 };
 
-const deleteTransaction = async (formData) => {
+const deleteTransaction = async (formData: FormData) => {
   const { id } = Object.fromEntries(formData);
-  console.log(id);
 
   if (!id) throw new Error("Id não informado!");
 
@@ -66,11 +65,10 @@ const deleteTransaction = async (formData) => {
 
     const deletedTransaction = await Transaction.findByIdAndDelete(id);
     // console.log(deletedTransaction);
+    revalidatePath("/");
   } catch (error) {
     console.log(error);
   }
-
-  revalidatePath("/Finance");
 };
 
 export { getTransactionTypes, setTransaction, deleteTransaction };
